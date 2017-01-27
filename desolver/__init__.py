@@ -1,4 +1,4 @@
-"""
+u"""
 The MIT License (MIT)
 
 Copyright (c) 2016 Microno95, Ekin Ozturk
@@ -23,36 +23,37 @@ SOFTWARE.
 """
 
 
+from __future__ import absolute_import
 from .differentialsystem import *
 
-__all__ =   ['OdeSystem',
-             'raise_KeyboardInterrupt',
-             'bisectroot',
-             'extrap',
-             'seval',
-             'explicitrk4',
-             'explicitrk45ck',
-             'explicitgills',
-             'explicitmidpoint',
-             'implicitmidpoint',
-             'heuns',
-             'backeuler',
-             'foreuler',
-             'impforeuler',
-             'eulertrap',
-             'adaptiveheuneuler',
-             'sympforeuler',
-             'sympBABs9o7H',
-             'sympABAs5o6HA',
-             'init_namespace',
-             'VariableMissing',
-             'LengthError',
-             'warning',
-             'safe_dict',
-             'available_methods',
-             'precautions_regex',
-             'methods_inv_order',
-             'namespaceInitialised',
-             'raise_KeyboardInterrupt']
+__all__ =   [u'OdeSystem',
+             u'raise_KeyboardInterrupt',
+             u'bisectroot',
+             u'extrap',
+             u'seval',
+             u'explicitrk4',
+             u'explicitrk45ck',
+             u'explicitgills',
+             u'explicitmidpoint',
+             u'implicitmidpoint',
+             u'heuns',
+             u'backeuler',
+             u'foreuler',
+             u'impforeuler',
+             u'eulertrap',
+             u'adaptiveheuneuler',
+             u'sympforeuler',
+             u'sympBABs9o7H',
+             u'sympABAs5o6HA',
+             u'init_namespace',
+             u'VariableMissing',
+             u'LengthError',
+             u'warning',
+             u'safe_dict',
+             u'available_methods',
+             u'precautions_regex',
+             u'methods_inv_order',
+             u'namespaceInitialised',
+             u'raise_KeyboardInterrupt']
              
 init_module()
