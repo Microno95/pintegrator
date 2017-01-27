@@ -80,8 +80,8 @@ ABAs5o6HA_coefficients = [[0.15585935917621682,
                           0.3785799280065607,
                           0.9966295909529364,
                           -0.6859195549562167,
-                          0.0]]
-                         
+                          0.0]]    
+    
 def bisectroot(equn, n, h, m, vardict, low, high, cstring, iterlimit=None):
     u"""
     Uses the bisection method to find the zeros of the function defined in cstring.
@@ -662,7 +662,14 @@ def sympABAs5o6HA(ode, vardict, soln, h, relerr, eqnum):
     
 
 def init_module(raiseKBINT=False):
-    global safe_dict, available_methods, precautions_regex, methods_inv_order, namespaceInitialised, raise_KeyboardInterrupt
+    global safe_dict, available_methods, precautions_regex, methods_inv_order, namespaceInitialised, raise_KeyboardInterrupt, perf_counter
+    if sys.platform == "win32":
+        # On Windows, the best timer is time.clock()
+        perf_counter = time.clock
+    else:
+        # On most other platforms the best timer is time.time()
+        perf_counter = time.time
+
     if not namespaceInitialised:
         safe_dict = dict()
         available_methods = dict()
@@ -832,7 +839,7 @@ class OdeSystem(object):
         Required arguments:
         dt: Step size value. For systems that grow exponentially choose a smaller value, for oscillatory systems choose
             a value slightly less than the highest frequency of oscillation. If unsure, use an adaptive method in the
-            list of available methods (view by calling availmethods()) followed by setmethod(), and finally call
+            list of available methods (view by calling availmethods()) followed by set_method(), and finally call
             setrelerr() with the keyword argument auto_calc_dt set to True for an approximately good step size."""
         self.dt = h
 
@@ -857,12 +864,6 @@ class OdeSystem(object):
                 print u'This choice of relative error has been observed to cause issues with adaptive algorithms' + \
                       u' and may lead to instability.\nIt is advised that you manually set the time-step to an' + \
                       u' appropriate value and the relative error to 1e-15 or greater.\n\n'
-
-    @staticmethod
-    def available_methods():
-        u"""Prints and then returns a dict of methods of integration that are available."""
-        print available_methods.keys()
-        return available_methods
 
     def set_method(self, method):
         u"""Sets the method of integration.
@@ -1067,7 +1068,7 @@ class OdeSystem(object):
                 if heff[0] != heff[1]:
                     heff[1] = heff[0]
                 if eta:
-                    time_remaining[0] = time.perf_counter()
+                    time_remaining[0] = perf_counter()
                 if abs(heff[0] + self.t) > abs(tf):
                     heff[0] = (tf - self.t)
                 elif heff[1] == 0 and heff[0] == 0:
@@ -1092,7 +1093,7 @@ class OdeSystem(object):
                     soln.append([vardict[u't']])
                 if eta:
                     temp_time = 0.4 * time_remaining[1] + (((tf - self.t) / heff[0]) *
-                                                           0.6 * (time.perf_counter() - time_remaining[0]))
+                                                           0.6 * (perf_counter() - time_remaining[0]))
                     if temp_time != 0 and numpy.abs(time_remaining[1]/temp_time - 1) > 0.2:
                         time_remaining[1] = temp_time
                     pLeft = round(1 - abs(tf - self.t) / abs(tf - self.t0), ndigits=3)
@@ -1119,3 +1120,9 @@ class OdeSystem(object):
         self.soln = soln
         self.t = soln[-1][-1]
         self.dt = heff[0]
+        
+    @staticmethod
+    def available_methods():
+        u"""Prints and then returns a dict of methods of integration that are available."""
+        print available_methods.keys()
+        return available_methods
