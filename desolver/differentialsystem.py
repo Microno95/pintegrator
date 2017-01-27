@@ -81,7 +81,30 @@ ABAs5o6HA_coefficients = [[0.15585935917621682,
                           0.9966295909529364,
                           -0.6859195549562167,
                           0.0]]    
-    
+
+def perf_counter():
+    # perf_counter substitute for backporting from 3.5 to 2.7
+    if sys.platform == "win32":
+        # On Windows, the best timer is time.clock()
+        return time.clock()
+    else:
+        # On most other platforms the best timer is time.time()
+        return time.time()
+        
+        
+def get_terminal_size():
+    from subprocess import check_output
+    if sys.platform == "win32":
+        outputOfModeCON = check_output("mode CON", shell=True, universal_newlines=True).split("\n")
+        x = int(outputOfModeCON[4].split(":")[1].strip())
+        y = int(outputOfModeCON[3].split(":")[1].strip())
+    else:
+        outputOfSttySize = check_output("stty size", shell=True, universal_newlines=True).replace("\n", "").split(" ")
+        x = int(outputOfSttySize[1])
+        y = int(outputOfSttySize[0])
+    return x, y
+        
+        
 def bisectroot(equn, n, h, m, vardict, low, high, cstring, iterlimit=None):
     u"""
     Uses the bisection method to find the zeros of the function defined in cstring.
@@ -662,14 +685,8 @@ def sympABAs5o6HA(ode, vardict, soln, h, relerr, eqnum):
     
 
 def init_module(raiseKBINT=False):
-    global safe_dict, available_methods, precautions_regex, methods_inv_order, namespaceInitialised, raise_KeyboardInterrupt, perf_counter
-    if sys.platform == "win32":
-        # On Windows, the best timer is time.clock()
-        perf_counter = time.clock
-    else:
-        # On most other platforms the best timer is time.time()
-        perf_counter = time.time
-
+    global safe_dict, available_methods, precautions_regex, methods_inv_order, namespaceInitialised, raise_KeyboardInterrupt
+    
     if not namespaceInitialised:
         safe_dict = dict()
         available_methods = dict()
@@ -1103,9 +1120,9 @@ class OdeSystem(object):
                                 convertSuffix(time_remaining[1]),
                                 self.t, heff[0])
                     if prevLen > len(etaString):
-                        print u"\r" + u" " * prevLen,; sys.stdout.write(u'\r')
-                    print etaString,; sys.stdout.write(u'\r')
-                    sys.stdout.flush()
+                        sys.stdout.write(u"\r" + u" " * (prevLen))
+                    sys.stdout.write(u"\r" + etaString)
+                    #sys.stdout.flush()
                 steps += 1
             except KeyboardInterrupt:
                 if raise_KeyboardInterrupt: raise
@@ -1113,10 +1130,9 @@ class OdeSystem(object):
                     break
         if eta:
             sys.stdout.flush()
-            print u'\r' + u' ' * (shutil.get_terminal_size()[0] - 2),; sys.stdout.write(u'')
-            print u"\r100%"
-        else:
-            print u"100%"
+            sys.stdout.write(u'\r' + u' ' * (get_terminal_size()[0] - 2) + u"\r")
+        sys.stdout.write(u"\n100%\n")
+        sys.stdout.flush()
         self.soln = soln
         self.t = soln[-1][-1]
         self.dt = heff[0]

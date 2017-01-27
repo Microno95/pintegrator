@@ -27,6 +27,8 @@ from __future__ import absolute_import
 from .differentialsystem import *
 
 __all__ =   [u'OdeSystem',
+             u'perf_counter',
+             u'get_terminal_size',
              u'raise_KeyboardInterrupt',
              u'bisectroot',
              u'extrap',

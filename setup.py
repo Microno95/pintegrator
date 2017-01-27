@@ -26,7 +26,7 @@ SOFTWARE.
 from setuptools import setup
 
 setup(name='DESolver',
-      version='1.3.1a1',
+      version='1.3.1b1',
       description='Differential Equation System Solver',
       author='Ekin Ozturk',
       author_email='ekin.ozturk@mail.utoronto.ca',
@@ -40,7 +40,7 @@ setup(name='DESolver',
           #   3 - Alpha
           #   4 - Beta
           #   5 - Production/Stable
-          'Development Status :: 3 - Alpha',
+          'Development Status :: 3 - Beta',
 
           'Environment :: Console',
           # Indicate who your project is intended for
